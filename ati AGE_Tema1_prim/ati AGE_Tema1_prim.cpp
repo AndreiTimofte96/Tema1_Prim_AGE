@@ -43,43 +43,48 @@ void ToBase2(int number, int base2[numberOfBits]) {
 	}
 }
 
-
-
-int Best_Neighbour(int base2[numberOfBits]) {
+int Best_Neighbour(int base2[numberOfBits], int maximum) {
 	
-	int number, result, bestPos, maximum = MAX_VAL;
-	for (int index = 0; index < numberOfBits; index++) {
+	int number, result, bestPos;
+	int ok = false;
+	for (int index = numberOfBits - 1; index >= 0; index--) {
 		base2[index] = 1 - base2[index];
 		number = ToBase10(base2);
 		base2[index] = 1 - base2[index];
 
-		used[number] = true;
+		//used[number] = true;
 		result = Function(number);
 		if (result > maximum) {
 			maximum = result;
 			bestPos = index;
+			ok = true;
 		}
 	}
-	base2[bestPos] = 1 - base2[bestPos];
+	if (ok)
+		base2[bestPos] = 1 - base2[bestPos];
 	return maximum;
 }
 
-int First_Neighbour(int base2[]) {
+int First_Neighbour(int base2[numberOfBits], int maximum) {
 
-	int number, result, bestPos, maximum = MAX_VAL;
-	for (int index = 0; index < numberOfBits; index++) {
+	int number, result, bestPos;
+	int ok = false;
+	for (int index = numberOfBits - 1; index >=0; index--) {
 		base2[index] = 1 - base2[index];
 		number = ToBase10(base2);
 		base2[index] = 1 - base2[index];
-		used[number] = true;
+
+		//used[number] = true;
 		result = Function(number);
 		if (result > maximum) {
 			maximum = result;
 			bestPos = index;
+			ok = true;
 			break;
 		}
 	}
-	base2[bestPos] = 1 - base2[bestPos];
+	if (ok)
+		base2[bestPos] = 1 - base2[bestPos];
 	return maximum;
 }
 
@@ -88,21 +93,25 @@ int HillClimbing(int value, int type) {
 	int localMax;
 
 	maximum = Function(value);
+	for (int index = 0; index < numberOfBits; index++)
+		base2[index] = 0;
+
 	ToBase2(value, base2);
+
 	while(ok == true){
 		
 		ok = false;
 		if (type == 0) {
-			localMax = Best_Neighbour(base2);
+			localMax = Best_Neighbour(base2, maximum);
 		}
 		else {
-			localMax = First_Neighbour(base2);
+			localMax = First_Neighbour(base2, maximum);
 		}
 				
 		value = ToBase10(base2);
 		if (localMax > maximum) {
 			maximum = localMax;	
-			ok = true;
+				ok = true;
 		}
 	}
 	return maximum;
