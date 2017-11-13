@@ -43,12 +43,7 @@ void ToBase2(int number, int base2[numberOfBits]) {
 	}
 }
 
-void InitializeBasin(int basin[]) {
-	basinLen = 0;
-	for (int index = 0; index < DMAX; index++) {
-		basin[index] = 0;
-	}
-}
+
 
 int Best_Neighbour(int base2[numberOfBits]) {
 	
@@ -58,6 +53,7 @@ int Best_Neighbour(int base2[numberOfBits]) {
 		number = ToBase10(base2);
 		base2[index] = 1 - base2[index];
 
+		used[number] = true;
 		result = Function(number);
 		if (result > maximum) {
 			maximum = result;
@@ -75,7 +71,7 @@ int First_Neighbour(int base2[]) {
 		base2[index] = 1 - base2[index];
 		number = ToBase10(base2);
 		base2[index] = 1 - base2[index];
-
+		used[number] = true;
 		result = Function(number);
 		if (result > maximum) {
 			maximum = result;
@@ -102,14 +98,12 @@ int HillClimbing(int value, int type) {
 		else {
 			localMax = First_Neighbour(base2);
 		}
-		
+				
 		value = ToBase10(base2);
-		used[value] = true;
 		if (localMax > maximum) {
-			maximum = localMax;
+			maximum = localMax;	
 			ok = true;
 		}
-		
 	}
 	return maximum;
 }
@@ -122,14 +116,12 @@ int main() {
 		if (used[value] == false){
 			used[value] = true;
 
-
 			max = HillClimbing(value, 0); //best - 0, first - 1
-				mymm.insert(std::pair<int, int>(max, value));
-				//usedMax[max] = true;
-				basin[basinLen++] = maximum;
+			mymm.insert(std::pair<int, int>(max, value));
+			basin[basinLen++] = maximum;
 			
-				if (max > globalMax) {
-					globalMax = max;
+			if (max > globalMax) {
+				globalMax = max;
 			}
 		}
 	}
@@ -149,8 +141,6 @@ int main() {
 			cout << '\n';
 		}
 	}
-
 	cout << "Maximul global este: " << globalMax << '\n';
-
 	return 0;
 }
