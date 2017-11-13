@@ -1,6 +1,4 @@
 ﻿  ati AGE_Tema1_prim.cpp
-d:\probleme_c++\ati age_tema1_prim\ati age_tema1_prim\ati age_tema1_prim.cpp(29): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-d:\probleme_c++\ati age_tema1_prim\ati age_tema1_prim\ati age_tema1_prim.cpp(71): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
-d:\probleme_c++\ati age_tema1_prim\ati age_tema1_prim\ati age_tema1_prim.cpp(53): warning C4101: 'value': unreferenced local variable
+d:\probleme_c++\ati age_tema1_prim\ati age_tema1_prim\ati age_tema1_prim.cpp(31): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
   ati AGE_Tema1_prim.vcxproj -> D:\Probleme_C++\ati AGE_Tema1_prim\Debug\ati AGE_Tema1_prim.exe
   ati AGE_Tema1_prim.vcxproj -> D:\Probleme_C++\ati AGE_Tema1_prim\Debug\ati AGE_Tema1_prim.pdb (Full PDB)

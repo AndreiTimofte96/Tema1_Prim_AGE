@@ -6,16 +6,18 @@
 #include <cstdlib>
 #include <cmath>
 #include <math.h>
+#include <map>
 #define MIN_VAL 9999999.0
 #define MAX_VAL 0
 #define DMAX 32
+#define NMAX 10000
 #define numberOfBits 5
 
 using namespace std;
 
 int base2[numberOfBits], basin[DMAX], basinLen, maximum = MAX_VAL, globalMax = MAX_VAL;
-bool used[DMAX];
-
+bool used[DMAX], usedMax[NMAX];
+multimap<int, int> mymm;
 
 int Function(int x) {
 	return x*x*x - 60*x*x + 900*x + 100;
@@ -48,74 +50,107 @@ void InitializeBasin(int basin[]) {
 	}
 }
 
-void Best_Neighbour(int base2[numberOfBits]) {
-
-	int localMax = MAX_VAL, position = 0, value, number, bestNumber, ok = false;
+int Best_Neighbour(int base2[numberOfBits]) {
+	
+	int number, result, bestPos, maximum = MAX_VAL;
 	for (int index = 0; index < numberOfBits; index++) {
 		base2[index] = 1 - base2[index];
 		number = ToBase10(base2);
 		base2[index] = 1 - base2[index];
 
-		if (used[number] == false) {
-
-			
-			localMax = Function(number);
-			if (localMax > maximum) {
-				ok = true;
-				bestNumber = number;
-				maximum = localMax;
-				position = index;
-			}
+		result = Function(number);
+		if (result > maximum) {
+			maximum = result;
+			bestPos = index;
 		}
 	}
-	if (ok == true) {
-		used[bestNumber] = true;
-		base2[position] = 1 - base2[position];
-		basin[basinLen++] = bestNumber;
-		Best_Neighbour(base2);
+	base2[bestPos] = 1 - base2[bestPos];
+	return maximum;
+}
+
+int First_Neighbour(int base2[]) {
+
+	int number, result, bestPos, maximum = MAX_VAL;
+	for (int index = 0; index < numberOfBits; index++) {
+		base2[index] = 1 - base2[index];
+		number = ToBase10(base2);
+		base2[index] = 1 - base2[index];
+
+		result = Function(number);
+		if (result > maximum) {
+			maximum = result;
+			bestPos = index;
+			break;
+		}
 	}
+	base2[bestPos] = 1 - base2[bestPos];
+	return maximum;
 }
 
-int First_Neighbour() {
+int HillClimbing(int value, int type) {
+	bool ok = true;
+	int localMax;
 
-	return 0;
-}
-
-void HillClimbing() {
-
-
-	//for (int index = 0; index < numberOfBits; index++)
-		//cout << base2[index];
-
-	maximum = Function(0);
-	for (int value = 0; value <= 31; value++) {
+	maximum = Function(value);
+	ToBase2(value, base2);
+	while(ok == true){
 		
-		if (used[value] == false) {
-			InitializeBasin(basin);
-			ToBase2(value, base2);
-			basin[basinLen++] = value;
-			used[value] = true;
-			Best_Neighbour(base2);
-
-			if (globalMax < maximum) {
-				globalMax = maximum;
-			}
-
-			cout << "Maximum: " << maximum << '\n';
-			cout << "Basin: ";
-			for (int index = 0; index < basinLen; index++) {
-				cout << basin[index] << " ";
-			}
-			cout << '\n';
-
-			maximum = MAX_VAL;
+		ok = false;
+		if (type == 0) {
+			localMax = Best_Neighbour(base2);
 		}
+		else {
+			localMax = First_Neighbour(base2);
+		}
+		
+		value = ToBase10(base2);
+		used[value] = true;
+		if (localMax > maximum) {
+			maximum = localMax;
+			ok = true;
+		}
+		
 	}
-	cout <<"GlobalMax: "<< globalMax<<'\n';
+	return maximum;
 }
 
 int main() {
 
-	HillClimbing();
+	int max = MAX_VAL, globalMax = MAX_VAL;
+	for (int value = 0; value < DMAX; value++) {
+
+		if (used[value] == false){
+			used[value] = true;
+
+
+			max = HillClimbing(value, 0); //best - 0, first - 1
+				mymm.insert(std::pair<int, int>(max, value));
+				//usedMax[max] = true;
+				basin[basinLen++] = maximum;
+			
+				if (max > globalMax) {
+					globalMax = max;
+			}
+		}
+	}
+	
+	for (int index = 0; index < basinLen; index++) {
+		usedMax[basin[index]] = true;
+	}
+
+	for (int index = 0; index < NMAX; index++)
+	{
+		if (usedMax[index] == true) {
+			pair <multimap<int, int>::iterator, multimap<int, int>::iterator> ret;
+			ret = mymm.equal_range(index);
+			cout << "Bazinul lui f(" << index << ") este: ";
+			for (multimap<int, int>::iterator it = ret.first; it != ret.second; ++it)
+				cout << ' ' << it->second;
+			cout << '\n';
+		}
+	}
+
+	cout << "Maximul global este: " << globalMax << '\n';
+
 	return 0;
 }
